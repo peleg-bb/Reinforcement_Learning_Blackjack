@@ -293,11 +293,55 @@ def create_grids(agent, usable_ace=False):
 # plt.show()
 #
 #
-def transition_matrix(action):
-    if action == 0:
-        print(np.round(transition_matrix_action_0, 3))
-    else:
-        print(np.round(transition_matrix_action_1, 3))
 
+
+
+def transition_matrix(env, num_samples=100000000):
+    # Create dictionaries for counting transitions
+    dictionary_count_all = {}
+    dictionary_state_action_state = {}
+
+    for _ in range(num_samples):
+        # Initialize the game
+        state = env.reset()
+        state = state[0]
+        done = False
+
+        while not done:
+            # Choose a random action
+            action = env.action_space.sample()
+
+            # Perform the action
+            next_state, _, done, _, _ = env.step(action)
+
+            state_action_next_state = (state, action, next_state)
+            state_action = (state, action)
+
+            # Update transition counts
+            dictionary_state_action_state[state_action_next_state] = dictionary_state_action_state.get(state_action_next_state, 0) + 1
+            dictionary_count_all[state_action] = dictionary_count_all.get(state_action, 0) + 1
+
+            # Update the state
+            state = next_state
+
+    # Normalize transition counts
+    for key, value in dictionary_state_action_state.items():
+        state, action, next_state = key
+        new_key = (state, action)
+        dictionary_state_action_state[key] = value / dictionary_count_all.get(new_key, 1)
+
+    print("Transition Matrix:")
+
+    for key, value in dictionary_state_action_state.items():
+        print("key: ", key, " value: ", value)
+
+    print(len(dictionary_state_action_state))
+
+   # print(dictionary_state_action_state)
+
+# Create Blackjack environment
+
+
+transition_matrix(env, num_samples=10000000)
 
 transition_matrix(0)

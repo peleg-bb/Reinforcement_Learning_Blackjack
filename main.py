@@ -35,7 +35,6 @@ for i in range(MIN_PLAYER_SCORE, MAX_PLAYER_SCORE):
 
 def encode_state(state):
     """Encodes a state (player count, dealer count, usable ace) to a unique integer."""
-    # (5, 5, 0) -> 5*(21-4) + 5*(100) + 0 = 5*17 + 500 + 0 = 585
     if state[0] > LOSING_SCORE:
         return (LOSING_SCORE + state[1] + (MAX_PLAYER_SCORE - MIN_PLAYER_SCORE) +
                 state[2] + (MAX_PLAYER_SCORE-MIN_PLAYER_SCORE+MAX_DEALER_SCORE-MIN_DEALER_SCORE))
@@ -172,7 +171,6 @@ for episode in tqdm(range(n_episodes)):
 
     agent.decay_epsilon()
 
-print(transition_matrix_action_0)
 for i in range(len(transition_matrix_action_0)):
     if np.sum(transition_matrix_action_0[i]) != 0:
         transition_matrix_action_0[i] /= np.sum(transition_matrix_action_0[i])
@@ -295,3 +293,11 @@ def create_grids(agent, usable_ace=False):
 # plt.show()
 #
 #
+def transition_matrix(action):
+    if action == 0:
+        print(np.round(transition_matrix_action_0, 3))
+    else:
+        print(np.round(transition_matrix_action_1, 3))
+
+
+transition_matrix(0)

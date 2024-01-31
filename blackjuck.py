@@ -2,7 +2,7 @@ import numpy as np
 import gymnasium as gym
 from tqdm import tqdm
 
-NUM_SAMPLES = 100000
+NUM_SAMPLES = 100
 
 
 # import gym # env of adi
@@ -61,16 +61,8 @@ transition_matrix = transition_matrix(env, NUM_SAMPLES)
 
 #policy = dict of state, (p to hit)
 
-
-def initiate_policy():
-    policy = {}
-    already_used_state = {}
-    for key, value in transition_matrix.items():
-        state, action, next_state = key
-        if not already_used_state.get(state, False):
-            already_used_state[state] = True
-            policy[state] = 0
-
+policy = {}
+already_used_state = {}
 
 def help_me_sum(values_of_policy, curr_state, action_to_do):
     sum_of_states = 0
@@ -101,6 +93,9 @@ def apply_policy(policy):
 # def value_function_q3(state, value):
 #     if()
 
+# get state from state, action, next state of transition matrix
 
+default_policy = dict.fromkeys([state for state, action, next_state in transition_matrix.keys()], 0.5)
 
+approximate_policy_evaluation(default_policy)
 

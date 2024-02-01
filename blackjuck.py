@@ -94,13 +94,14 @@ def apply_policy(policy, num_of_iterarion=5, epsilon = 0.1):
         state, reward, terminated, done, info = env.step(action_to_do)
         iteration_counter += 1
 
-# def value_function_q3(state, value):
-#     if()
+
+def value_function_q3(state):
+    return values_of_policy.get(state, 0)
 
 # get state from state, action, next state of transition matrix
 
 default_policy = dict.fromkeys([state for state, action, next_state in transition_matrix.keys()], 0.5)
 
 values_of_policy = approximate_policy_evaluation(default_policy)
-print(values_of_policy)
+print(value_function_q3((13, 2, False)))
 

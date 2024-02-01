@@ -64,31 +64,35 @@ transition_matrix = transition_matrix(env, NUM_SAMPLES)
 policy = {}
 already_used_state = {}
 
+
 def help_me_sum(values_of_policy, curr_state, action_to_do):
     sum_of_states = 0
-    for key, value in transition_matrix.items():
+    for key, transition_probability in transition_matrix.items():
         state, action, next_state = key
-        if state == curr_state and action == action_to_do: # need to optimize this and iterate over the one that needed only
-            sum_of_states += value*values_of_policy.get(next_state, 0)
+        if state == curr_state and action == action_to_do:
+            # need to optimize this and iterate over the one that needed only
+            sum_of_states += transition_probability*values_of_policy.get(next_state, 0)
     return sum_of_states
 
 
-def approximate_policy_evaluation(policy, num_of_iterarion = 5):
+def approximate_policy_evaluation(policy, num_of_iterarion=5):
     values_of_policy = {}
     for i in range(num_of_iterarion):
-        already_used_state = {}
-        for key, value in policy.items():
-            action_to_do = np.random.choice([0, 1], p=[1 - value, value])
+        for state, stick_action_probability in policy.items():
+            action_to_do = np.random.choice([0, 1], p=[1 - stick_action_probability, stick_action_probability])
             _, reward, _, _, _ = env.step(action_to_do)
-            values_of_policy[key] = reward + 1*help_me_sum(values_of_policy, key, action_to_do)
+            values_of_policy[state] = reward + help_me_sum(values_of_policy, state, action_to_do)
+    return values_of_policy
 
 
-def apply_policy(policy):
+def apply_policy(policy, num_of_iterarion=5, epsilon = 0.1):
     state = env.reset()
     done = False
-    while not done: #check if done or terminated
+    iteration_counter = 0
+    while not done and iteration_counter <= num_of_iterarion: # check if done or terminated
         action_to_do = np.random.choice([0, 1], p=[1 - policy[state], policy[state]])
         state, reward, terminated, done, info = env.step(action_to_do)
+        iteration_counter += 1
 
 # def value_function_q3(state, value):
 #     if()
@@ -97,5 +101,6 @@ def apply_policy(policy):
 
 default_policy = dict.fromkeys([state for state, action, next_state in transition_matrix.keys()], 0.5)
 
-approximate_policy_evaluation(default_policy)
+values_of_policy = approximate_policy_evaluation(default_policy)
+print(values_of_policy)
 
